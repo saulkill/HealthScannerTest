@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "636213818727",
+    "project_id": "healthscanner-88745",
+    "storage_bucket": "healthscanner-88745.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:636213818727:android:03de1287a23cb4064debc2",
+        "android_client_info": {
+          "package_name": "com.cookandroid.healthscanner"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "636213818727-8h9n8s3tm4mqr3ff6pkedkc00ka4ltgp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAB7u65YgdV9kUXF0z__40v9FRaoj9bZaw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "636213818727-8h9n8s3tm4mqr3ff6pkedkc00ka4ltgp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
