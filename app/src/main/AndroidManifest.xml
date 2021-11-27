@@ -21,7 +21,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.dashboard.DashboardActivity" />
-        <activity android:name=".ui.data.ListActivity">
+        <activity android:name=".ui.food.FoodActivity">
 
         </activity>
         <activity android:name=".MainActivity">

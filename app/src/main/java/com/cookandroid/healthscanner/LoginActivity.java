@@ -37,7 +37,10 @@ public class LoginActivity extends AppCompatActivity {
         mLoginBtn = findViewById(R.id.lbtn_Login);
         fAuth = FirebaseAuth.getInstance();
         progressBar = findViewById(R.id.progressBar2);
-
+        if (fAuth.getCurrentUser() != null){
+            startActivity(new Intent(getApplicationContext(),MainActivity.class));
+            finish();
+        }
         mLoginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
