@@ -36,19 +36,16 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/foodrecyclerview"
-        android:layout_width="386dp"
-        android:layout_height="363dp"
-        android:layout_marginTop="12dp"
+        android:layout_width="407dp"
+        android:layout_height="412dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.482"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/frameLayout" />
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 
     <FrameLayout
         android:id="@+id/frameLayout"
-        android:layout_width="391dp"
-        android:layout_height="163dp"
-        android:layout_marginTop="12dp"
+        android:layout_width="404dp"
+        android:layout_height="121dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/radioGroup">
@@ -60,4 +57,28 @@
 
         </com.github.mikephil.charting.charts.BarChart>
     </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/frameLayout">
+
+        <EditText
+            android:id="@+id/search_Et"
+            android:layout_width="324dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:hint="검색어를 입력해주세요."
+            android:inputType="text" />
+
+        <Button
+            android:id="@+id/search_bt"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="검색" />
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

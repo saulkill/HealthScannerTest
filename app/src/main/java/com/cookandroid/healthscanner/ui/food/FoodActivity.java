@@ -10,6 +10,9 @@ import android.app.ProgressDialog;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
@@ -60,7 +63,9 @@ public class FoodActivity extends AppCompatActivity {
     String chage =null;
     List<GraphData> graphData = new ArrayList<>();
     ArrayList<String> xLabel = new ArrayList<>();
-
+    EditText searchEd;
+    Button searchBt;
+    String searchSt ="";
     float kAverage;
     float pAverage;
     float cAverage;
@@ -75,6 +80,8 @@ public class FoodActivity extends AppCompatActivity {
         radioButton1 = findViewById(R.id.radioButton);
         radioButton2 = findViewById(R.id.radioButton2);
         radioButton3 = findViewById(R.id.radioButton3);
+        searchEd = findViewById(R.id.search_Et);
+        searchBt = findViewById(R.id.search_bt);
         barChart = (BarChart)findViewById(R.id.chart1);
         user = FirebaseAuth.getInstance().getCurrentUser();
         uid = user !=null ? user.getUid():null;
@@ -96,9 +103,18 @@ public class FoodActivity extends AppCompatActivity {
         recyclerView.setAdapter(foodAdapter);
         EventChangeListener();
         RadioButtonTextEventChange();
-
+        search();
     }
-
+    void search(){
+        searchBt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                searchSt = (String)searchEd.getText().toString().trim();
+                Log.d("seachSt",searchSt);
+                EventChangeListener();
+            }
+        });
+    }
     RadioGroup.OnCheckedChangeListener radioGroupButtonChangeListener = new RadioGroup.OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(RadioGroup radioGroup, int i) {
@@ -157,27 +173,45 @@ public class FoodActivity extends AppCompatActivity {
     }
 
     private void EventChangeListener(){
-        db.collection("Food").orderBy("foodName", Query.Direction.ASCENDING)
-                .addSnapshotListener(new EventListener<QuerySnapshot>() {
-                    @Override
-                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException e) {
-
-                        if (e !=null){
-                            if (progressDialog.isShowing())
-                                progressDialog.dismiss();
-                            Log.e("Firestore errer", e.getMessage());
-                            return;
-                        }
-                        for (DocumentChange dc : value.getDocumentChanges()){
-                            if(dc.getType() == DocumentChange.Type.ADDED){
-                                foodArrayList.add(dc.getDocument().toObject(Food.class));
+        if (searchSt == null || searchSt == "" || searchSt == " " ||searchSt.length()==0){
+            db.collection("Food")
+                    .orderBy("foodName", Query.Direction.ASCENDING)
+                    .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                        @Override
+                        public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException e) {
+                            foodArrayList.clear();
+                            if (e !=null){
+                                if (progressDialog.isShowing())
+                                    progressDialog.dismiss();
+                                Log.e("Firestore errer", e.getMessage());
+                                return;
                             }
-                            foodAdapter.notifyDataSetChanged();
-                            if (progressDialog.isShowing())
-                                progressDialog.dismiss();
+                            for (DocumentChange dc : value.getDocumentChanges()){
+                                if(dc.getType() == DocumentChange.Type.ADDED){
+//
+                                    foodArrayList.add(dc.getDocument().toObject(Food.class));
+                                }
+                                foodAdapter.notifyDataSetChanged();
+                                if (progressDialog.isShowing())
+                                    progressDialog.dismiss();
+                            }
                         }
+                    });
+        }
+        else{
+            db.collection("Food").whereEqualTo("foodName",searchSt)
+                    .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    foodArrayList.clear();
+                    for (DocumentSnapshot doc : task.getResult()){
+                        foodArrayList.add(doc.toObject(Food.class));
+                        foodAdapter.notifyDataSetChanged();
                     }
-                });
+                }
+            });
+        }
+
     }
 
     private void setFoodData(List<GraphData> GraphData){
