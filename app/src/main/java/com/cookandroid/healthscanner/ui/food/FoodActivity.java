@@ -126,8 +126,7 @@ public class FoodActivity extends AppCompatActivity {
            public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
                if (documentSnapshot != null && documentSnapshot.exists()) {
                         radioButton1.setText("아침 : " + documentSnapshot.getData().get("foodName").toString());
-
-                   Faveragelist(180,1,1);
+                       Faveragelist(180,1,1);
                }
            }
        });
@@ -135,18 +134,22 @@ public class FoodActivity extends AppCompatActivity {
        documentReference1.addSnapshotListener(new EventListener<DocumentSnapshot>() {
            @Override
            public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
-               radioButton2.setText("점심 : " + documentSnapshot.getData().get("foodName").toString());
+               if (documentSnapshot != null && documentSnapshot.exists()){
+                   radioButton2.setText("점심 : " + documentSnapshot.getData().get("foodName").toString());
+                   Faveragelist(180,1,1);
+               }
 
-               Faveragelist(180,1,1);
            }
        });
         DocumentReference documentReference2 = db.collection("User").document(uid).collection("Food").document("dinner");
         documentReference2.addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
-                radioButton3.setText("저녁 : " + documentSnapshot.getData().get("foodName").toString());barChart.clearAnimation();
+                if (documentSnapshot != null && documentSnapshot.exists()){
+                    radioButton3.setText("저녁 : " + documentSnapshot.getData().get("foodName").toString());barChart.clearAnimation();
+                    Faveragelist(180,1,1);
+                }
 
-                Faveragelist(180,1,1);
             }
         });
 
