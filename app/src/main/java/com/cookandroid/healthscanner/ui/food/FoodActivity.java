@@ -239,14 +239,13 @@ public class FoodActivity extends AppCompatActivity {
         yRight.setAxisMaximum(3000f);
         yRight.setDrawLabels(false);
 
-        barChart.setViewPortOffsets(0f,1f,2f,3f);
+
         barChart.getDescription().setEnabled(false);
         barChart.setBackgroundColor(Color.WHITE);
         barChart.getLegend().setEnabled(false);
         barChart.fitScreen();
         if (barChart.getData() != null)
             barChart.getData().clearValues();
-       // barChart.notifyDataSetChanged();
 
         barChart.invalidate();
         barChart.setData(data);
