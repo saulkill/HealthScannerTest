@@ -1,15 +1,16 @@
 package com.cookandroid.healthscanner.ui.food.datatable;
 
-public class Food {
-
-    private String foodName;
+public class DeleteFood {
+    private String foodName,date,fileName;
     private float protein, carb, fat, kcal;
 
-    public Food() {
+    public DeleteFood() {
     }
 
-    public Food(String foodName, float protein, float carb, float fat, float kcal) {
+    public DeleteFood(String foodName, String date, String fileName, float protein, float carb, float fat, float kcal) {
         this.foodName = foodName;
+        this.date = date;
+        this.fileName = fileName;
         this.protein = protein;
         this.carb = carb;
         this.fat = fat;
@@ -18,8 +19,10 @@ public class Food {
 
     @Override
     public String toString() {
-        return "Food{" +
+        return "DeleteFood{" +
                 "foodName='" + foodName + '\'' +
+                ", date='" + date + '\'' +
+                ", fileName='" + fileName + '\'' +
                 ", protein=" + protein +
                 ", carb=" + carb +
                 ", fat=" + fat +
@@ -33,6 +36,22 @@ public class Food {
 
     public void setFoodName(String foodName) {
         this.foodName = foodName;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
     }
 
     public float getProtein() {

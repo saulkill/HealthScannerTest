@@ -1,6 +1,7 @@
 package com.cookandroid.healthscanner.ui.food.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,16 +12,25 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.cookandroid.healthscanner.R;
 import com.cookandroid.healthscanner.ui.food.datatable.Food;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.protobuf.StringValue;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.FoodViewHolder> {
     String chage;
@@ -63,25 +73,59 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.FoodViewHolder
                     float dbcarb = food.getCarb();
                     float dbfat = food.getFat();
                     float dbkcal = food.getKcal();
-                    DocumentReference documentReference = db.collection("User").document(uid).collection("Food").document(chage);
-                    Map<String, Object> user = new HashMap<>();
-                    user.put("foodName", dbfoodName);
-                    user.put("protein", dbprotein);
-                    user.put("carb", dbcarb);
-                    user.put("fat", dbfat);
-                    user.put("kcal", dbkcal);
-                    documentReference.set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                            // Log.d(TAG,"onSuccess: user Profile is created for"+uid);
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            // Log.d(TAG,"onSuccess: "+e.toString());
-                        }
-                    });
+                    if(chage != null){
+                        CollectionReference collectionReference = db.collection("User").document(uid).collection("Food");
+                        collectionReference.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                if (task.isSuccessful()){
+                                    int count =0;
+                                    long now = System.currentTimeMillis();
+                                    Date date = new Date(now);
+                                    SimpleDateFormat dateFormat = new  SimpleDateFormat("yyyy-MM-dd HH:mm", java.util.Locale.getDefault());
+                                    String type="";
+                                    Random random = new Random();
+                                    String strDate = dateFormat.format(date);
+                                    for (DocumentSnapshot document : task.getResult()){
+                                        if (chage.equals((String) document.getData().get("type")) == true){
+                                            type= (String)document.getData().get("type");
+//                                        Log.d("FoodAdapter", "type : " + type);
+                                            count++;
+                                        }
 
+//                                    Log.d("FoodAdapter", "count : " + count);
+//                                    Log.d("FoodAdapter", "now : " + now);
+//                                    Log.d("FoodAdapter", "date : " + date);
+//                                    Log.d("FoodAdapter", "strDate : "+ strDate);
+                                    }
+                                    if (count <5){
+                                        Map<String, Object> user = new HashMap<>();
+                                        user.put("type",chage);
+                                        user.put("foodName", dbfoodName);
+                                        user.put("protein", dbprotein);
+                                        user.put("carb", dbcarb);
+                                        user.put("fat", dbfat);
+                                        user.put("kcal", dbkcal);
+                                        user.put("date",strDate);
+                                        user.put("fileName",chage+now);
+                                        collectionReference.document(chage + now).set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                // Log.d(TAG,"onSuccess: user Profile is created for"+uid);
+                                            }
+                                        }).addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                // Log.d(TAG,"onSuccess: "+e.toString());
+                                            }
+                                        });
+                                    }
+
+                                }
+
+                            }
+                        });
+                    }
                 }
             });
         }

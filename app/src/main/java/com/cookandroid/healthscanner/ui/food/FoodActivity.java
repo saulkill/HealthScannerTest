@@ -2,15 +2,19 @@ package com.cookandroid.healthscanner.ui.food;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Activity;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
@@ -18,6 +22,8 @@ import android.widget.RadioGroup;
 
 import com.cookandroid.healthscanner.R;
 import com.cookandroid.healthscanner.ui.food.adapter.FoodAdapter;
+import com.cookandroid.healthscanner.ui.food.adapter.FoodDeleteListAdapter;
+import com.cookandroid.healthscanner.ui.food.datatable.DeleteFood;
 import com.cookandroid.healthscanner.ui.food.datatable.Food;
 import com.cookandroid.healthscanner.ui.food.foodgraph.GraphData;
 import com.cookandroid.healthscanner.ui.food.foodgraph.ValueFormatter;
@@ -43,13 +49,17 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 public class FoodActivity extends AppCompatActivity {
 //음식 화면 리스트
     RecyclerView recyclerView;
     ArrayList<Food> foodArrayList;
+    ArrayList<DeleteFood> deletfoodList;
     FoodAdapter foodAdapter;
     FirebaseUser user;
     FirebaseFirestore db;
@@ -58,9 +68,13 @@ public class FoodActivity extends AppCompatActivity {
     RadioButton radioButton1;
     RadioButton radioButton2;
     RadioButton radioButton3;
+    public static Dialog dialog;
+    Button breakfaskBt;
+    Button dinnerBt;
+    Button lunchBt;
     BarChart barChart;
     String uid;
-    String chage =null;
+    String chage ="";
     List<GraphData> graphData = new ArrayList<>();
     ArrayList<String> xLabel = new ArrayList<>();
     EditText searchEd;
@@ -80,6 +94,10 @@ public class FoodActivity extends AppCompatActivity {
         radioButton1 = findViewById(R.id.radioButton);
         radioButton2 = findViewById(R.id.radioButton2);
         radioButton3 = findViewById(R.id.radioButton3);
+        breakfaskBt = findViewById(R.id.delete_bf);
+        lunchBt = findViewById(R.id.delete_lc);
+        dinnerBt = findViewById(R.id.delete_dn);
+
         searchEd = findViewById(R.id.search_Et);
         searchBt = findViewById(R.id.search_bt);
         barChart = (BarChart)findViewById(R.id.chart1);
@@ -98,12 +116,14 @@ public class FoodActivity extends AppCompatActivity {
 
         db = FirebaseFirestore.getInstance();
         foodArrayList = new ArrayList<Food>();
+        deletfoodList =new ArrayList<DeleteFood>();
         foodAdapter = new FoodAdapter(FoodActivity.this,foodArrayList,chage);
 
         recyclerView.setAdapter(foodAdapter);
         EventChangeListener();
         RadioButtonTextEventChange();
         search();
+        ButtonDelete();
     }
     void search(){
         searchBt.setOnClickListener(new View.OnClickListener() {
@@ -112,64 +132,230 @@ public class FoodActivity extends AppCompatActivity {
                 searchSt = (String)searchEd.getText().toString().trim();
                 Log.d("seachSt",searchSt);
                 EventChangeListener();
+                RadioButtonTextEventChange();
             }
         });
+    }
+    public void ButtonDelete(){
+
+        breakfaskBt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String dlchage = "breakfask";
+                showDialog(FoodActivity.this,dlchage);
+
+            }
+        });
+        dinnerBt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String dlchage = "dinner";
+                showDialog(FoodActivity.this,dlchage);
+            }
+        });
+        lunchBt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String dlchage = "lunch";
+                showDialog(FoodActivity.this,dlchage);
+            }
+        });
+    }
+    public void showDialog(Activity activity,String chage){
+
+        dialog = new Dialog(activity);
+        // dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCancelable(false);
+        dialog.setContentView(R.layout.dialog_layout);
+        WindowManager.LayoutParams params = dialog.getWindow().getAttributes();
+        params.width = WindowManager.LayoutParams.MATCH_PARENT;
+        params.width = WindowManager.LayoutParams.WRAP_CONTENT;
+        dialog.getWindow().setAttributes((WindowManager.LayoutParams) params);
+        Button btndialog = (Button) dialog.findViewById(R.id.btndialog);
+        btndialog.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                dialog.dismiss();
+                RadioButtonTextEventChange();
+            }
+        });
+
+        RecyclerView recyclerView = dialog.findViewById(R.id.delete_recycler);
+        FoodDeleteListAdapter foodDeleteListAdapter = new FoodDeleteListAdapter(FoodActivity.this,deletfoodList);
+        recyclerView.setAdapter(foodDeleteListAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false));
+
+        recyclerView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+        db.collection("User").document(uid).collection("Food").whereEqualTo("type",chage)
+                .orderBy("foodName", Query.Direction.ASCENDING)
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException e) {
+                        deletfoodList.clear();
+                        if (e !=null){
+                            if (progressDialog.isShowing())
+                                progressDialog.dismiss();
+                            Log.e("Firestore errer", e.getMessage());
+                            return;
+                        }
+                        for (DocumentChange dc : value.getDocumentChanges()){
+                            if(dc.getType() == DocumentChange.Type.ADDED){
+//
+                                deletfoodList.add(dc.getDocument().toObject(DeleteFood.class));
+                            }
+                            foodDeleteListAdapter.notifyDataSetChanged();
+                            if (progressDialog.isShowing())
+                                progressDialog.dismiss();
+                        }
+                    }
+                });
+        dialog.show();
+
     }
     RadioGroup.OnCheckedChangeListener radioGroupButtonChangeListener = new RadioGroup.OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(RadioGroup radioGroup, int i) {
             if(i == R.id.radioButton){
                 chage ="breakfask";
+                RadioButtonTextEventChange();
                 foodAdapter = new FoodAdapter(FoodActivity.this,foodArrayList,chage);
                 recyclerView.setAdapter(foodAdapter);
 
                 }
             else if(i == R.id.radioButton2){ chage ="lunch";
+                RadioButtonTextEventChange();
                 foodAdapter = new FoodAdapter(FoodActivity.this,foodArrayList,chage);
                 recyclerView.setAdapter(foodAdapter);
             }
             else if(i == R.id.radioButton3){ chage ="dinner";
+                RadioButtonTextEventChange();
                 foodAdapter = new FoodAdapter(FoodActivity.this,foodArrayList,chage);
                 recyclerView.setAdapter(foodAdapter);
             }
         }
     };
     void RadioButtonTextEventChange() {
+        CollectionReference collectionReference = db.collection("User").document(uid).collection("Food");
+            collectionReference.whereEqualTo("type","breakfask").addSnapshotListener(new EventListener<QuerySnapshot>() {
+                @Override
+                public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                    if (e != null) {
+                        Log.w("TAG", "Listen failed.", e);
+                        return;
+                    }
+                    int count =0;
+                    String str = "";
+//                Log.d("TAG","outqueryDocumentSnapshots.size : "+ queryDocumentSnapshots.size());
+                    if (queryDocumentSnapshots.size() ==0){
+                        for (DocumentChange dc : queryDocumentSnapshots.getDocumentChanges()){
+                            Log.d("TAG","zerodc.size : "+ dc.getDocument().getData().size());
+                            if (dc.getDocument().getData().get("foodName")!= null) {
+                                str += (String) dc.getDocument().getData().get("foodName");
+                                if (count<queryDocumentSnapshots.size() -1){
+                                    str+="+";
+                                    count++;
+                                }
+                            }
+                        }
+                    }
+                    else {
+                        for (DocumentSnapshot ds : queryDocumentSnapshots.getDocuments()){
+                            if (ds.get("foodName")!= null) {
+                                str += (String) ds.get("foodName");
+                                if (count<queryDocumentSnapshots.size() -1){
+                                    str+="+";
+                                    count++;
+                                }
 
-        DocumentReference documentReference = db.collection("User").document(uid).collection("Food").document("breakfask");
-        documentReference.addSnapshotListener(new EventListener<DocumentSnapshot>() {
-           @Override
-           public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
-               if (documentSnapshot != null && documentSnapshot.exists()) {
-                        radioButton1.setText("아침 : " + documentSnapshot.getData().get("foodName").toString());
-                       Faveragelist(180,1,1);
-               }
-           }
-       });
-       DocumentReference documentReference1 = db.collection("User").document(uid).collection("Food").document("lunch");
-       documentReference1.addSnapshotListener(new EventListener<DocumentSnapshot>() {
-           @Override
-           public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
-               if (documentSnapshot != null && documentSnapshot.exists()){
-                   radioButton2.setText("점심 : " + documentSnapshot.getData().get("foodName").toString());
-                   Faveragelist(180,1,1);
-               }
-
-           }
-       });
-        DocumentReference documentReference2 = db.collection("User").document(uid).collection("Food").document("dinner");
-        documentReference2.addSnapshotListener(new EventListener<DocumentSnapshot>() {
-            @Override
-            public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
-                if (documentSnapshot != null && documentSnapshot.exists()){
-                    radioButton3.setText("저녁 : " + documentSnapshot.getData().get("foodName").toString());barChart.clearAnimation();
+                            }
+                        }
+                    }
+                    radioButton1.setText("아침 : " + str);
                     Faveragelist(180,1,1);
                 }
+            });
+        collectionReference.whereEqualTo("type","lunch").addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                if (e != null) {
+                    Log.w("TAG", "Listen failed.", e);
+                    return;
+                }
+                int count =0;
+                String str = "";
+//                Log.d("TAG","outqueryDocumentSnapshots.size : "+ queryDocumentSnapshots.size());
+                if (queryDocumentSnapshots.size() ==0){
+                    for (DocumentChange dc : queryDocumentSnapshots.getDocumentChanges()){
+                        Log.d("TAG","zerodc.size : "+ dc.getDocument().getData().size());
+                        if (dc.getDocument().getData().get("foodName")!= null) {
+                            str += (String) dc.getDocument().getData().get("foodName");
+                            if (count<queryDocumentSnapshots.size() -1){
+                                str+="+";
+                                count++;
+                            }
+                        }
+                    }
+                }
+                else {
+                    for (DocumentSnapshot ds : queryDocumentSnapshots.getDocuments()){
+                        if (ds.get("foodName")!= null) {
+                            str += (String) ds.get("foodName");
+                            if (count<queryDocumentSnapshots.size() -1){
+                                str+="+";
+                                count++;
+                            }
 
+                        }
+                    }
+                }
+                radioButton2.setText("점심 : " + str);
+                Faveragelist(180,1,1);
             }
         });
+        collectionReference.whereEqualTo("type","dinner").addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                if (e != null) {
+                    Log.w("TAG", "Listen failed.", e);
+                    return;
+                }
+                int count =0;
+                String str = "";
+//                Log.d("TAG","outqueryDocumentSnapshots.size : "+ queryDocumentSnapshots.size());
+                if (queryDocumentSnapshots.size() ==0){
+                    for (DocumentChange dc : queryDocumentSnapshots.getDocumentChanges()){
+                        Log.d("TAG","zerodc.size : "+ dc.getDocument().getData().size());
+                        if (dc.getDocument().getData().get("foodName")!= null) {
+                            str += (String) dc.getDocument().getData().get("foodName");
+                            if (count<queryDocumentSnapshots.size() -1){
+                                str+="+";
+                                count++;
+                            }
+                        }
+                    }
+                }
+                else {
+                    for (DocumentSnapshot ds : queryDocumentSnapshots.getDocuments()){
+                            if (ds.get("foodName")!= null) {
+                                str += (String) ds.get("foodName");
+                                if (count<queryDocumentSnapshots.size() -1){
+                                    str+="+";
+                                    count++;
+                                }
 
-
+                        }
+                        }
+                }
+                radioButton3.setText("저녁 : " + str);
+                Faveragelist(180,1,1);
+            }
+        });
     }
 
     private void EventChangeListener(){
@@ -286,7 +472,7 @@ public class FoodActivity extends AppCompatActivity {
 
     }
 
-    private void Faveragelist(int weight,int sex, int activityRate){
+    private void Faveragelist(int height,int sex, int activityRate){
         int Weightsex=0;
         int i = 0;
         if (sex == 1){
@@ -296,19 +482,19 @@ public class FoodActivity extends AppCompatActivity {
             Weightsex = 21; //여자일때
         }
         if (activityRate == 1) {//심한 육체활동을 하는 경우 & 다이어트 강도
-            kAverage =((weight/100)*(weight/100)*Weightsex)  * 35 - 40;
+            kAverage =((height/100)*(height/100)*Weightsex)  * 35 - 40;
             pAverage=kAverage%45;
             cAverage=kAverage%35;
             fAverage=kAverage%20;
         }
         else if (activityRate == 2) {//보통의 활동을 하는 경우& 다이어트 강도
-            kAverage =((weight/100)*(weight/100)*Weightsex) * 30 - 35;
+            kAverage =((height/100)*(height/100)*Weightsex) * 30 - 35;
             pAverage=kAverage%55;
             cAverage=kAverage%20;
             fAverage=kAverage%25;
         }
         else {//육체활동이 거의 없는 경우& 다이어트 강도
-            kAverage =((weight/10)*(weight/10)*Weightsex) * 25 - 30;
+            kAverage =((height/10)*(height/10)*Weightsex) * 25 - 30;
             pAverage=kAverage%60;
             cAverage=kAverage%10;
             fAverage=kAverage%30;
@@ -333,6 +519,7 @@ public class FoodActivity extends AppCompatActivity {
                 float fGraphResult = 0;
 
                 for (DocumentSnapshot document : task.getResult()) {
+
                     kGraph = ((Double)document.getData().get("kcal")).floatValue();
                     pGraph = ((Double)document.getData().get("protein")).floatValue();
                     cGraph = ((Double)document.getData().get("carb")).floatValue();
@@ -347,10 +534,10 @@ public class FoodActivity extends AppCompatActivity {
                 pGraphResult = userpAverage - pAverage;
                 cGraphResult = usercAverage - cAverage;
                 fGraphResult = userfAverage - fAverage;
-                Log.d("TAG", "dsfadsfonSuccess: " +kGraphResult);
-                Log.d("TAG", "dsfadsfonSuccess: " +pGraphResult);
-                Log.d("TAG", "dsfadsfonSuccess: " +cGraphResult);
-                Log.d("TAG", "dsfadsfonSuccess: " +fGraphResult);
+//                Log.d("TAG", "dsfadsfonSuccess: " +kGraphResult);
+//                Log.d("TAG", "dsfadsfonSuccess: " +pGraphResult);
+//                Log.d("TAG", "dsfadsfonSuccess: " +cGraphResult);
+//                Log.d("TAG", "dsfadsfonSuccess: " +fGraphResult);
                 graphData.add(new GraphData(0f,kGraphResult));
                 graphData.add(new GraphData(1f,pGraphResult));
                 graphData.add(new GraphData(2f,cGraphResult));
@@ -361,7 +548,7 @@ public class FoodActivity extends AppCompatActivity {
                 xLabel.add("지방");
                 xLabel.add("단백질");
                 setFoodData(graphData);
-                Log.d("TAG", "dsfadsfonSuccess: " +task.getResult().size());
+//                Log.d("TAG", "dsfadsfonSuccess: " +task.getResult().size());
 
             }
         });
