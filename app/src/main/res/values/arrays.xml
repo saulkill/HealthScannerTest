@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="parts">array
+        <item>팔</item>
+        <item>어깨</item>
+        <item>등</item>
+        <item>상체</item>
+        <item>하체</item>
+    </string-array>
+</resources>

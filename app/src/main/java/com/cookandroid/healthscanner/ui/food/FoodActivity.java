@@ -2,8 +2,8 @@ package com.cookandroid.healthscanner.ui.food;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -17,8 +17,10 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
 import com.cookandroid.healthscanner.R;
 import com.cookandroid.healthscanner.ui.food.adapter.FoodAdapter;
@@ -36,6 +38,7 @@ import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -49,10 +52,7 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 public class FoodActivity extends AppCompatActivity {
@@ -73,19 +73,19 @@ public class FoodActivity extends AppCompatActivity {
     Button dinnerBt;
     Button lunchBt;
     BarChart barChart;
-    String uid;
+    private String uid;
     String chage ="";
     List<GraphData> graphData = new ArrayList<>();
     ArrayList<String> xLabel = new ArrayList<>();
     EditText searchEd;
     Button searchBt;
     String searchSt ="";
-    float kAverage;
+    float kAverage; //나중에 정리
     float pAverage;
     float cAverage;
     float fAverage;
-    //ArrayList<Food> foodArrayLists = new ArrayList<Food>();
     BarData data;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -103,7 +103,7 @@ public class FoodActivity extends AppCompatActivity {
         barChart = (BarChart)findViewById(R.id.chart1);
         user = FirebaseAuth.getInstance().getCurrentUser();
         uid = user !=null ? user.getUid():null;
-
+        db = FirebaseFirestore.getInstance();
         progressDialog = new ProgressDialog(this);
         progressDialog.setCancelable(false);
         progressDialog.setMessage("Fetching : Data...");
@@ -113,17 +113,18 @@ public class FoodActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.foodrecyclerview);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-        db = FirebaseFirestore.getInstance();
         foodArrayList = new ArrayList<Food>();
         deletfoodList =new ArrayList<DeleteFood>();
         foodAdapter = new FoodAdapter(FoodActivity.this,foodArrayList,chage);
-
         recyclerView.setAdapter(foodAdapter);
+
         EventChangeListener();
         RadioButtonTextEventChange();
         search();
         ButtonDelete();
+
+
+
     }
     void search(){
         searchBt.setOnClickListener(new View.OnClickListener() {
@@ -164,7 +165,7 @@ public class FoodActivity extends AppCompatActivity {
     public void showDialog(Activity activity,String chage){
 
         dialog = new Dialog(activity);
-        // dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        //dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setCancelable(false);
         dialog.setContentView(R.layout.dialog_layout);
         WindowManager.LayoutParams params = dialog.getWindow().getAttributes();
@@ -241,8 +242,13 @@ public class FoodActivity extends AppCompatActivity {
         }
     };
     void RadioButtonTextEventChange() {
-        CollectionReference collectionReference = db.collection("User").document(uid).collection("Food");
-            collectionReference.whereEqualTo("type","breakfask").addSnapshotListener(new EventListener<QuerySnapshot>() {
+        String [] foodtypelist = {"breakfask","lunch","dinner"};
+        String foodtype = "";
+        for (int i =0 ; i<3; i++){
+            foodtype = foodtypelist[i];
+            CollectionReference collectionReference = db.collection("User").document(uid).collection("Food");
+            String finalFoodtype = foodtype;
+            collectionReference.whereEqualTo("type",finalFoodtype).addSnapshotListener(new EventListener<QuerySnapshot>() {
                 @Override
                 public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
                     if (e != null) {
@@ -276,86 +282,21 @@ public class FoodActivity extends AppCompatActivity {
                             }
                         }
                     }
-                    radioButton1.setText("아침 : " + str);
-                    Faveragelist(180,1,1);
+                    if (finalFoodtype =="breakfask"){
+                        radioButton1.setText("아침 : " + str);
+                    }
+                    if (finalFoodtype =="lunch"){
+                        radioButton2.setText("점심 : " + str);
+                    }
+                    if (finalFoodtype =="dinner"){
+                        radioButton3.setText("저녁 : " + str);
+                    }
+
+                    GraphViewData();
                 }
             });
-        collectionReference.whereEqualTo("type","lunch").addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
-                if (e != null) {
-                    Log.w("TAG", "Listen failed.", e);
-                    return;
-                }
-                int count =0;
-                String str = "";
-//                Log.d("TAG","outqueryDocumentSnapshots.size : "+ queryDocumentSnapshots.size());
-                if (queryDocumentSnapshots.size() ==0){
-                    for (DocumentChange dc : queryDocumentSnapshots.getDocumentChanges()){
-                        Log.d("TAG","zerodc.size : "+ dc.getDocument().getData().size());
-                        if (dc.getDocument().getData().get("foodName")!= null) {
-                            str += (String) dc.getDocument().getData().get("foodName");
-                            if (count<queryDocumentSnapshots.size() -1){
-                                str+="+";
-                                count++;
-                            }
-                        }
-                    }
-                }
-                else {
-                    for (DocumentSnapshot ds : queryDocumentSnapshots.getDocuments()){
-                        if (ds.get("foodName")!= null) {
-                            str += (String) ds.get("foodName");
-                            if (count<queryDocumentSnapshots.size() -1){
-                                str+="+";
-                                count++;
-                            }
+        }
 
-                        }
-                    }
-                }
-                radioButton2.setText("점심 : " + str);
-                Faveragelist(180,1,1);
-            }
-        });
-        collectionReference.whereEqualTo("type","dinner").addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
-                if (e != null) {
-                    Log.w("TAG", "Listen failed.", e);
-                    return;
-                }
-                int count =0;
-                String str = "";
-//                Log.d("TAG","outqueryDocumentSnapshots.size : "+ queryDocumentSnapshots.size());
-                if (queryDocumentSnapshots.size() ==0){
-                    for (DocumentChange dc : queryDocumentSnapshots.getDocumentChanges()){
-                        Log.d("TAG","zerodc.size : "+ dc.getDocument().getData().size());
-                        if (dc.getDocument().getData().get("foodName")!= null) {
-                            str += (String) dc.getDocument().getData().get("foodName");
-                            if (count<queryDocumentSnapshots.size() -1){
-                                str+="+";
-                                count++;
-                            }
-                        }
-                    }
-                }
-                else {
-                    for (DocumentSnapshot ds : queryDocumentSnapshots.getDocuments()){
-                            if (ds.get("foodName")!= null) {
-                                str += (String) ds.get("foodName");
-                                if (count<queryDocumentSnapshots.size() -1){
-                                    str+="+";
-                                    count++;
-                                }
-
-                        }
-                        }
-                }
-                radioButton3.setText("저녁 : " + str);
-                Faveragelist(180,1,1);
-            }
-        });
     }
 
     private void EventChangeListener(){
@@ -471,10 +412,34 @@ public class FoodActivity extends AppCompatActivity {
         barChart.setData(data);
 
     }
+    private void GraphViewData(){
+        DocumentReference documentReference = db.collection("User").document(uid);
+        documentReference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
 
-    private void Faveragelist(int height,int sex, int activityRate){
+                Double height = (Double) documentSnapshot.get("height");
+                Long sex = (Long) documentSnapshot.get("sex");
+                Long activityRate = (Long) documentSnapshot.get("activityRate");
+                Log.d("GraphViwData","height"+height);
+                Log.d("GraphViwData","sex"+sex);
+                Log.d("GraphViwData","activityRate"+activityRate);
+                if (height != null && sex != null && activityRate != null){
+                    Faveragelist(height,sex,activityRate);
+                }
+                else{
+                    Toast.makeText(getApplicationContext(),"개인 정보를 입력해주세요.",Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+    }
+
+    private void Faveragelist(Double height,Long sex, Long activityRate){
+
+
         int Weightsex=0;
         int i = 0;
+
         if (sex == 1){
             Weightsex = 22; //남자일때
         }
@@ -482,19 +447,19 @@ public class FoodActivity extends AppCompatActivity {
             Weightsex = 21; //여자일때
         }
         if (activityRate == 1) {//심한 육체활동을 하는 경우 & 다이어트 강도
-            kAverage =((height/100)*(height/100)*Weightsex)  * 35 - 40;
+            kAverage = (float) (((height/100)*(height/100)*Weightsex)  * 35 - 40);
             pAverage=kAverage%45;
             cAverage=kAverage%35;
             fAverage=kAverage%20;
         }
         else if (activityRate == 2) {//보통의 활동을 하는 경우& 다이어트 강도
-            kAverage =((height/100)*(height/100)*Weightsex) * 30 - 35;
+            kAverage = (float) (((height/100)*(height/100)*Weightsex) * 30 - 35);
             pAverage=kAverage%55;
             cAverage=kAverage%20;
             fAverage=kAverage%25;
         }
         else {//육체활동이 거의 없는 경우& 다이어트 강도
-            kAverage =((height/10)*(height/10)*Weightsex) * 25 - 30;
+            kAverage = (float) (((height/10)*(height/10)*Weightsex) * 25 - 30);
             pAverage=kAverage%60;
             cAverage=kAverage%10;
             fAverage=kAverage%30;
@@ -534,10 +499,7 @@ public class FoodActivity extends AppCompatActivity {
                 pGraphResult = userpAverage - pAverage;
                 cGraphResult = usercAverage - cAverage;
                 fGraphResult = userfAverage - fAverage;
-//                Log.d("TAG", "dsfadsfonSuccess: " +kGraphResult);
-//                Log.d("TAG", "dsfadsfonSuccess: " +pGraphResult);
-//                Log.d("TAG", "dsfadsfonSuccess: " +cGraphResult);
-//                Log.d("TAG", "dsfadsfonSuccess: " +fGraphResult);
+
                 graphData.add(new GraphData(0f,kGraphResult));
                 graphData.add(new GraphData(1f,pGraphResult));
                 graphData.add(new GraphData(2f,cGraphResult));
@@ -548,7 +510,6 @@ public class FoodActivity extends AppCompatActivity {
                 xLabel.add("지방");
                 xLabel.add("단백질");
                 setFoodData(graphData);
-//                Log.d("TAG", "dsfadsfonSuccess: " +task.getResult().size());
 
             }
         });

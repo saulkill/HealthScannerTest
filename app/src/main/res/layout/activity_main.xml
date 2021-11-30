@@ -20,9 +20,19 @@
         android:id="@+id/foodbutton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Button"
+        android:text="Food"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/mtextView" />
+
+    <Button
+        android:id="@+id/exercise_at"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Exercise"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/foodbutton" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

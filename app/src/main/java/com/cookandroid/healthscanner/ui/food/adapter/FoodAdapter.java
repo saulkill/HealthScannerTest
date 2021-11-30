@@ -23,6 +23,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.SetOptions;
 import com.google.protobuf.StringValue;
 
 import java.text.SimpleDateFormat;
@@ -108,7 +109,7 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.FoodViewHolder
                                         user.put("kcal", dbkcal);
                                         user.put("date",strDate);
                                         user.put("fileName",chage+now);
-                                        collectionReference.document(chage + now).set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        collectionReference.document(chage + now).set(user, SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
                                             @Override
                                             public void onSuccess(Void aVoid) {
                                                 // Log.d(TAG,"onSuccess: user Profile is created for"+uid);
