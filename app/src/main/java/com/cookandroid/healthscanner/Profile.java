@@ -7,10 +7,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
 public class Profile extends AppCompatActivity {
+    private static final String TAG = "ProfileAtivity";
     //Initialize variable
     DrawerLayout drawerLayout;
     ImageView btMenu;
@@ -22,7 +24,7 @@ public class Profile extends AppCompatActivity {
         setContentView(R.layout.activity_profile);
 
         //Assign variable
-        drawerLayout = findViewById(R.id.drawer_layout);
+        drawerLayout = findViewById(R.id.drawer_layoutprofile);
         btMenu = findViewById(R.id.bt_menu);
         recyclerView = findViewById(R.id.recycler_view);
 

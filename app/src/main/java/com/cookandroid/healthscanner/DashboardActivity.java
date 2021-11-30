@@ -1,4 +1,4 @@
-package com.cookandroid.healthscanner.ui.dashboard;
+package com.cookandroid.healthscanner;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -18,9 +18,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.borax12.materialdaterangepicker.date.DatePickerDialog;
-import com.cookandroid.healthscanner.MainActivity;
-import com.cookandroid.healthscanner.MainAdapter;
-import com.cookandroid.healthscanner.R;
 import com.cookandroid.healthscanner.ui.dashboard.adapter.ExerciseListAdapter;
 import com.cookandroid.healthscanner.ui.dashboard.exercisedatetable.ExerciseData;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -29,7 +26,6 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -81,7 +77,7 @@ public class DashboardActivity extends AppCompatActivity implements DatePickerDi
         dateButton = (ImageButton)findViewById(R.id.ib_startdate);
         saveButton = (ImageButton)findViewById(R.id.ib_save);
 //Assign variable
-        drawerLayout = findViewById(R.id.drawer_layout);
+        drawerLayout = findViewById(R.id.drawer_layoutdashdoard);
         btMenu = findViewById(R.id.bt_menu);
         recyclerViewMenu = findViewById(R.id.recycler_view);
         //Set layout manager

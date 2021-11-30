@@ -12,9 +12,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.cookandroid.healthscanner.ui.dashboard.DashboardActivity;
-import com.cookandroid.healthscanner.ui.food.FoodActivity;
-
 
 import java.util.ArrayList;
 
@@ -54,26 +51,27 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
                         //when position is equal to 0
                         //Redirect to home page
                         activity.startActivity(new Intent(activity,MainActivity.class)
-                                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK| Intent.FLAG_ACTIVITY_CLEAR_TASK));
                         break;
                     case 1:
                         //where position is equal to 1
                         //Redirect to profile page
                         activity.startActivity(new Intent(activity,Profile.class)
-                                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK| Intent.FLAG_ACTIVITY_CLEAR_TASK));
                         break;
                     case 2:
                         //where position is equal to 1
                         //Redirect to food page
                         activity.startActivity(new Intent(activity, FoodActivity.class)
-                                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK| Intent.FLAG_ACTIVITY_CLEAR_TASK));
+
                         break;
 
                     case 3:
                         //where position is equal to 3
                         //Redirect to Dashboard page
                         activity.startActivity(new Intent(activity, DashboardActivity.class)
-                                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK| Intent.FLAG_ACTIVITY_CLEAR_TASK));
                         break;
 
                     case 4:

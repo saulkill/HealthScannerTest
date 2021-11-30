@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.food.FoodActivity">
+    android:id="@+id/drawer_layoutfood"
+    tools:context=".FoodActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -114,8 +115,8 @@
                 android:layout_width="407dp"
                 android:layout_height="412dp" />
         </LinearLayout>
-    </LinearLayout>
 
+    </LinearLayout>
 
     <RelativeLayout
         android:layout_width="300dp"
@@ -128,4 +129,5 @@
             layout="@layout/main_nav_drawer"/>
 
     </RelativeLayout>
+
 </androidx.drawerlayout.widget.DrawerLayout>

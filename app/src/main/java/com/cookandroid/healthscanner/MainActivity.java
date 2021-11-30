@@ -6,16 +6,9 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.TextView;
-
-import com.cookandroid.healthscanner.ui.dashboard.DashboardActivity;
-import com.cookandroid.healthscanner.ui.food.FoodActivity;
-import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 
@@ -25,15 +18,18 @@ DrawerLayout drawerLayout;
     ImageView btMenu;
     RecyclerView recyclerView;
     MainAdapter adapter;
-    public static ArrayList<String> arrayList = new ArrayList<>();
+    static ArrayList<String> arrayList = new ArrayList<>();
 
     public static void closeDrawer(DrawerLayout drawerLayout) {
         //check condition
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             //when drawer is open
-            //Closer drawer
+            //Closer drawers
             drawerLayout.closeDrawer(GravityCompat.START);
+        }else {
+            drawerLayout.openDrawer(GravityCompat.START);
         }
+
     }
     @Override
     protected void onCreate(Bundle savedInstanceState) {

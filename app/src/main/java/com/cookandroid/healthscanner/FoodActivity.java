@@ -1,4 +1,4 @@
-package com.cookandroid.healthscanner.ui.food;
+package com.cookandroid.healthscanner;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,11 +21,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.Toast;
 
-import com.cookandroid.healthscanner.MainActivity;
-import com.cookandroid.healthscanner.MainAdapter;
-import com.cookandroid.healthscanner.R;
 import com.cookandroid.healthscanner.ui.food.adapter.FoodAdapter;
 import com.cookandroid.healthscanner.ui.food.adapter.FoodDeleteListAdapter;
 import com.cookandroid.healthscanner.ui.food.datatable.DeleteFood;
@@ -126,7 +122,7 @@ public class FoodActivity extends AppCompatActivity {
         foodAdapter = new FoodAdapter(FoodActivity.this,foodArrayList,chage);
         recyclerView.setAdapter(foodAdapter);
         //Assign variable
-        drawerLayout = findViewById(R.id.drawer_layout);
+        drawerLayout = findViewById(R.id.drawer_layoutfood);
         btMenu = findViewById(R.id.bt_menu);
         recyclerView1 = findViewById(R.id.recycler_view);
 
