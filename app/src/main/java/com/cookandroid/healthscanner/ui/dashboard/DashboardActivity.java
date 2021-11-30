@@ -3,6 +3,8 @@ package com.cookandroid.healthscanner.ui.dashboard;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -11,10 +13,13 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.borax12.materialdaterangepicker.date.DatePickerDialog;
+import com.cookandroid.healthscanner.MainActivity;
+import com.cookandroid.healthscanner.MainAdapter;
 import com.cookandroid.healthscanner.R;
 import com.cookandroid.healthscanner.ui.dashboard.adapter.ExerciseListAdapter;
 import com.cookandroid.healthscanner.ui.dashboard.exercisedatetable.ExerciseData;
@@ -53,6 +58,12 @@ public class DashboardActivity extends AppCompatActivity implements DatePickerDi
     private ArrayList<ExerciseData> exerciseDataArrayList;
     private RecyclerView recyclerView;
     private ExerciseListAdapter exerciseListAdapter;
+
+    //Initialize variable
+    DrawerLayout drawerLayout;
+    ImageView btMenu;
+    RecyclerView recyclerViewMenu;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,6 +80,15 @@ public class DashboardActivity extends AppCompatActivity implements DatePickerDi
         tvLast=(TextView)findViewById(R.id.tv_ldtext);
         dateButton = (ImageButton)findViewById(R.id.ib_startdate);
         saveButton = (ImageButton)findViewById(R.id.ib_save);
+//Assign variable
+        drawerLayout = findViewById(R.id.drawer_layout);
+        btMenu = findViewById(R.id.bt_menu);
+        recyclerViewMenu = findViewById(R.id.recycler_view);
+        //Set layout manager
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        //set profile
+        recyclerView.setAdapter(new MainAdapter(this, MainActivity.arrayList));
+
 
         recyclerView = findViewById(R.id.rc_exercise);
         recyclerView.setHasFixedSize(true);
@@ -94,7 +114,13 @@ public class DashboardActivity extends AppCompatActivity implements DatePickerDi
                 dpd.show(getFragmentManager(), "Datepickerdialog");
             }
         });
-
+        btMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //open drawer
+                drawerLayout.openDrawer(GravityCompat.START);
+            }
+        });
         sp_parts.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
@@ -226,5 +252,11 @@ public class DashboardActivity extends AppCompatActivity implements DatePickerDi
         tvStart.setText(startdate);
         tvLast.setText(lastdave);
 
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        //Close drawer
+        MainActivity.closeDrawer(drawerLayout);
     }
 }

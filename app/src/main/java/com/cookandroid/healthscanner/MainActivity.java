@@ -1,53 +1,80 @@
 package com.cookandroid.healthscanner;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.cookandroid.healthscanner.ui.dashboard.DashboardActivity;
 import com.cookandroid.healthscanner.ui.food.FoodActivity;
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity {
 //로그인 창 구현
-    TextView textView;
-    Button button1;
-    Button button2;
+DrawerLayout drawerLayout;
+    ImageView btMenu;
+    RecyclerView recyclerView;
+    MainAdapter adapter;
+    public static ArrayList<String> arrayList = new ArrayList<>();
+
+    public static void closeDrawer(DrawerLayout drawerLayout) {
+        //check condition
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            //when drawer is open
+            //Closer drawer
+            drawerLayout.closeDrawer(GravityCompat.START);
+        }
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
-        textView = findViewById(R.id.mtextView);
-        button1= (Button)findViewById(R.id.foodbutton);
-        button2= (Button)findViewById(R.id.exercise_at);
-        button1.setOnClickListener(new View.OnClickListener() {
+        //Assign variable
+        drawerLayout = findViewById(R.id.drawer_layout);
+        btMenu = findViewById(R.id.bt_menu);
+        recyclerView = findViewById(R.id.recycler_view);
+
+        //clear array list
+        arrayList.clear();
+
+        //add menu item in array list
+        arrayList.add("Home");
+        arrayList.add("Profile");
+        arrayList.add("Food");
+        arrayList.add("Exercising");
+        arrayList.add("Logout");
+
+        //Initialize adapter
+        adapter = new MainAdapter(this,arrayList);
+        //Set layout manager
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        //set adapter
+        recyclerView.setAdapter(adapter);
+
+        btMenu.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                startActivity(new Intent(getApplicationContext(),FoodActivity.class));
-                finish();
-            }
-        });
-        button2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(getApplicationContext(), DashboardActivity.class));
-                finish();
-            }
-        });
-        textView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                logout(view);
+            public void onClick(View v) {
+                //open drawer
+                drawerLayout.openDrawer(GravityCompat.START);
             }
         });
     }
-    public void logout(View view){
-        FirebaseAuth.getInstance().signOut();
-        startActivity(new Intent(getApplicationContext(),LoginActivity.class));
-        finish();
+    @Override
+    protected void onPause() {
+        super.onPause();
+        //Close drawer
+        closeDrawer(drawerLayout);
     }
+
 }

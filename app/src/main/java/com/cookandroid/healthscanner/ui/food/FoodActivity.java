@@ -3,6 +3,7 @@ package com.cookandroid.healthscanner.ui.food;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -22,6 +23,8 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import com.cookandroid.healthscanner.MainActivity;
+import com.cookandroid.healthscanner.MainAdapter;
 import com.cookandroid.healthscanner.R;
 import com.cookandroid.healthscanner.ui.food.adapter.FoodAdapter;
 import com.cookandroid.healthscanner.ui.food.adapter.FoodDeleteListAdapter;
@@ -86,10 +89,15 @@ public class FoodActivity extends AppCompatActivity {
     float fAverage;
     BarData data;
 
+    DrawerLayout drawerLayout;
+    ImageView btMenu;
+    RecyclerView recyclerView1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_food);
+
         radioGroup = findViewById(R.id.radioGroup);
         radioButton1 = findViewById(R.id.radioButton);
         radioButton2 = findViewById(R.id.radioButton2);
@@ -117,6 +125,22 @@ public class FoodActivity extends AppCompatActivity {
         deletfoodList =new ArrayList<DeleteFood>();
         foodAdapter = new FoodAdapter(FoodActivity.this,foodArrayList,chage);
         recyclerView.setAdapter(foodAdapter);
+        //Assign variable
+        drawerLayout = findViewById(R.id.drawer_layout);
+        btMenu = findViewById(R.id.bt_menu);
+        recyclerView1 = findViewById(R.id.recycler_view);
+
+        //Set layout manager
+        recyclerView1.setLayoutManager(new LinearLayoutManager(this));
+        //set profile
+        recyclerView1.setAdapter(new MainAdapter(this, MainActivity.arrayList));
+        btMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //open drawer
+                drawerLayout.openDrawer(GravityCompat.START);
+            }
+        });
 
         EventChangeListener();
         RadioButtonTextEventChange();
@@ -513,6 +537,14 @@ public class FoodActivity extends AppCompatActivity {
 
             }
         });
+
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        //Close drawer
+        MainActivity.closeDrawer(drawerLayout);
+
 
     }
 }
