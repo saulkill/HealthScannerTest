@@ -85,9 +85,9 @@ public class DashboardActivity extends AppCompatActivity implements DatePickerDi
         btMenu = findViewById(R.id.bt_menu);
         recyclerViewMenu = findViewById(R.id.recycler_view);
         //Set layout manager
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerViewMenu.setLayoutManager(new LinearLayoutManager(this));
         //set profile
-        recyclerView.setAdapter(new MainAdapter(this, MainActivity.arrayList));
+        recyclerViewMenu.setAdapter(new MainAdapter(this, MainActivity.arrayList));
 
 
         recyclerView = findViewById(R.id.rc_exercise);

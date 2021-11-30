@@ -452,7 +452,7 @@ public class FoodActivity extends AppCompatActivity {
                     Faveragelist(height,sex,activityRate);
                 }
                 else{
-                    Toast.makeText(getApplicationContext(),"개인 정보를 입력해주세요.",Toast.LENGTH_LONG).show();
+                   // Toast.makeText(getApplicationContext(),"개인 정보를 입력해주세요.",Toast.LENGTH_LONG).show();
                 }
             }
         });
