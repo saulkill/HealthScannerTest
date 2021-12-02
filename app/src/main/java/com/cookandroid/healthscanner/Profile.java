@@ -155,9 +155,9 @@ public class Profile extends AppCompatActivity {
                 ppedName.setText((String)task.getResult().get("fName"));
                 ppedEmail.setText((String)task.getResult().get("email"));
                 ppedPhone.setText((String)task.getResult().get("phone"));
-                if ((String)task.getResult().get("height")!=null)
+                if (task.getResult().get("height")!=null)
                     ppedHeight.setText((String)task.getResult().get("height").toString());
-                if ((String)task.getResult().get("weight")!=null)
+                if (task.getResult().get("weight")!=null)
                     ppedWeight.setText((String)task.getResult().get("weight").toString());
                 if ((Long)task.getResult().get("sex") ==Long.valueOf(1))
                     radioButtonSex1.setChecked(true);
