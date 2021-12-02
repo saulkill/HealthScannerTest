@@ -1,4 +1,4 @@
-package com.cookandroid.healthscanner;
+package com.cookandroid.healthscanner.ui.dashboard;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,8 +16,12 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.borax12.materialdaterangepicker.date.DatePickerDialog;
+import com.cookandroid.healthscanner.MainActivity;
+import com.cookandroid.healthscanner.MainAdapter;
+import com.cookandroid.healthscanner.R;
 import com.cookandroid.healthscanner.ui.dashboard.adapter.ExerciseListAdapter;
 import com.cookandroid.healthscanner.ui.dashboard.exercisedatetable.ExerciseData;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -70,6 +74,7 @@ public class DashboardActivity extends AppCompatActivity implements DatePickerDi
         db = FirebaseFirestore.getInstance();
 
         sp_parts = (Spinner)findViewById(R.id.sp_parts);
+
         exerciseName = (TextView)findViewById(R.id.tv_exerciseName);
         exerciseExplanation = (TextView)findViewById(R.id.tv_exercise);
         tvStart = (TextView)findViewById(R.id.tv_sdtext);
@@ -121,7 +126,6 @@ public class DashboardActivity extends AppCompatActivity implements DatePickerDi
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
                 exci = adapterView.getItemAtPosition(position).toString();
-
                 SpinnerList(exci);
                 Log.d("TAG","글자 확인 : " + exci);
             }
@@ -149,7 +153,7 @@ public class DashboardActivity extends AppCompatActivity implements DatePickerDi
                             String exerciseExplanation = (String) task.getResult().get("exerciseExplanation");
                             String image = (String) task.getResult().get("image");
                             String startdate = (String) task.getResult().get("startdate");
-                            String lastdave =  (String) task.getResult().get("lastdave");
+                            String lastdave =  (String) task.getResult().get("lastdate");
                             boolean saveData = true;
                             Map<String, Object> user = new HashMap<>();
                             user.put("exercise", exercise);
@@ -158,7 +162,8 @@ public class DashboardActivity extends AppCompatActivity implements DatePickerDi
                             user.put("image", image);
                             user.put("saveData", saveData);
                             user.put("startdate", startdate);
-                            user.put("lastdave",lastdave);
+                            user.put("lastdate",lastdave);
+
                             db.collection("User").document(uid).collection("Exercise").document("savefile")
                                     .set(user, SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
@@ -166,6 +171,7 @@ public class DashboardActivity extends AppCompatActivity implements DatePickerDi
                                     documentReference.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
                                         public void onSuccess(Void aVoid) {
+
 
                                         }
                                     }).addOnFailureListener(new OnFailureListener() {
@@ -201,7 +207,7 @@ public class DashboardActivity extends AppCompatActivity implements DatePickerDi
                 exerciseDataArrayList.clear();
                 for (DocumentSnapshot doc : task.getResult()){
                     exerciseDataArrayList.add(doc.toObject(ExerciseData.class));
-                    //recyclerView.setAdapter(exerciseListAdapter);
+//                    recyclerView.setAdapter(exerciseListAdapter);
                     exerciseListAdapter.notifyDataSetChanged();
                 }
             }
@@ -231,7 +237,7 @@ public class DashboardActivity extends AppCompatActivity implements DatePickerDi
         String lastdave =  yearEnd+"/"+(++monthOfYearEnd)+"/"+dayOfMonthEnd;
         Map<String, Object> date = new HashMap<>();
         date.put("startdate", startdate);
-        date.put("lastdave",lastdave);
+        date.put("lastdate",lastdave);
         db.collection("User").document(uid).collection("Exercise").document("dotsavefile")
                 .set(date, SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override

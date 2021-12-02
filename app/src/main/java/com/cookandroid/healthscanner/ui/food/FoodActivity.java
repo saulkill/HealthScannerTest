@@ -1,4 +1,4 @@
-package com.cookandroid.healthscanner;
+package com.cookandroid.healthscanner.ui.food;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,6 +22,9 @@ import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
+import com.cookandroid.healthscanner.MainActivity;
+import com.cookandroid.healthscanner.MainAdapter;
+import com.cookandroid.healthscanner.R;
 import com.cookandroid.healthscanner.ui.food.adapter.FoodAdapter;
 import com.cookandroid.healthscanner.ui.food.adapter.FoodDeleteListAdapter;
 import com.cookandroid.healthscanner.ui.food.datatable.DeleteFood;
@@ -58,7 +61,7 @@ public class FoodActivity extends AppCompatActivity {
 //음식 화면 리스트
     RecyclerView recyclerView;
     ArrayList<Food> foodArrayList;
-    ArrayList<DeleteFood> deletfoodList;
+    ArrayList<DeleteFood> deletfoodList =new ArrayList<DeleteFood>();
     FoodAdapter foodAdapter;
     FirebaseUser user;
     FirebaseFirestore db;
@@ -79,10 +82,6 @@ public class FoodActivity extends AppCompatActivity {
     EditText searchEd;
     Button searchBt;
     String searchSt ="";
-    float kAverage; //나중에 정리
-    float pAverage;
-    float cAverage;
-    float fAverage;
     BarData data;
 
     DrawerLayout drawerLayout;
@@ -118,7 +117,7 @@ public class FoodActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         foodArrayList = new ArrayList<Food>();
-        deletfoodList =new ArrayList<DeleteFood>();
+
         foodAdapter = new FoodAdapter(FoodActivity.this,foodArrayList,chage);
         recyclerView.setAdapter(foodAdapter);
         //Assign variable
@@ -455,7 +454,10 @@ public class FoodActivity extends AppCompatActivity {
     }
 
     private void Faveragelist(Double height,Long sex, Long activityRate){
-
+        float kAverage; //나중에 정리
+        float pAverage;
+        float cAverage;
+        float fAverage;
 
         int Weightsex=0;
         int i = 0;
@@ -468,21 +470,21 @@ public class FoodActivity extends AppCompatActivity {
         }
         if (activityRate == 1) {//심한 육체활동을 하는 경우 & 다이어트 강도
             kAverage = (float) (((height/100)*(height/100)*Weightsex)  * 35 - 40);
-            pAverage=kAverage%45;
-            cAverage=kAverage%35;
-            fAverage=kAverage%20;
+            pAverage= (float) (kAverage*0.45);
+            cAverage= (float) (kAverage*0.35);
+            fAverage= (float) (kAverage*0.20);
         }
         else if (activityRate == 2) {//보통의 활동을 하는 경우& 다이어트 강도
             kAverage = (float) (((height/100)*(height/100)*Weightsex) * 30 - 35);
-            pAverage=kAverage%55;
-            cAverage=kAverage%20;
-            fAverage=kAverage%25;
+            pAverage= (float) (kAverage*0.55);
+            cAverage= (float) (kAverage*0.20);
+            fAverage= (float) (kAverage*0.25);
         }
         else {//육체활동이 거의 없는 경우& 다이어트 강도
-            kAverage = (float) (((height/10)*(height/10)*Weightsex) * 25 - 30);
-            pAverage=kAverage%60;
-            cAverage=kAverage%10;
-            fAverage=kAverage%30;
+            kAverage = (float) (((height/100)*(height/100)*Weightsex) * 25 - 30);
+            pAverage= (float) (kAverage*0.6);
+            cAverage= (float) (kAverage*0.1);
+            fAverage= (float) (kAverage*0.3);
         }
 
         CollectionReference collectionReference = db.collection("User").document(uid).collection("Food");

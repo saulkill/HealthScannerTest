@@ -19,12 +19,12 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
+
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
-import com.google.protobuf.StringValue;
+
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -70,10 +70,10 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.FoodViewHolder
                     db = FirebaseFirestore.getInstance();
                     String uid = user != null ? user.getUid() : null;
                     String dbfoodName = food.getFoodName();
-                    float dbprotein = food.getProtein();
-                    float dbcarb = food.getCarb();
-                    float dbfat = food.getFat();
-                    float dbkcal = food.getKcal();
+                    Double dbprotein = food.getProtein();
+                    Double dbcarb = food.getCarb();
+                    Double dbfat = food.getFat();
+                    Double dbkcal = food.getKcal();
                     if(chage != null){
                         CollectionReference collectionReference = db.collection("User").document(uid).collection("Food");
                         collectionReference.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {

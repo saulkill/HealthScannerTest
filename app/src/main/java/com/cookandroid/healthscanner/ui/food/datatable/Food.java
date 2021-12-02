@@ -3,28 +3,17 @@ package com.cookandroid.healthscanner.ui.food.datatable;
 public class Food {
 
     private String foodName;
-    private float protein, carb, fat, kcal;
+    private Double protein, carb, fat, kcal;
 
     public Food() {
     }
 
-    public Food(String foodName, float protein, float carb, float fat, float kcal) {
+    public Food(String foodName, Double protein, Double carb, Double fat, Double kcal) {
         this.foodName = foodName;
         this.protein = protein;
         this.carb = carb;
         this.fat = fat;
         this.kcal = kcal;
-    }
-
-    @Override
-    public String toString() {
-        return "Food{" +
-                "foodName='" + foodName + '\'' +
-                ", protein=" + protein +
-                ", carb=" + carb +
-                ", fat=" + fat +
-                ", kcal=" + kcal +
-                '}';
     }
 
     public String getFoodName() {
@@ -35,35 +24,35 @@ public class Food {
         this.foodName = foodName;
     }
 
-    public float getProtein() {
+    public Double getProtein() {
         return protein;
     }
 
-    public void setProtein(float protein) {
+    public void setProtein(Double protein) {
         this.protein = protein;
     }
 
-    public float getCarb() {
+    public Double getCarb() {
         return carb;
     }
 
-    public void setCarb(float carb) {
+    public void setCarb(Double carb) {
         this.carb = carb;
     }
 
-    public float getFat() {
+    public Double getFat() {
         return fat;
     }
 
-    public void setFat(float fat) {
+    public void setFat(Double fat) {
         this.fat = fat;
     }
 
-    public float getKcal() {
+    public Double getKcal() {
         return kcal;
     }
 
-    public void setKcal(float kcal) {
+    public void setKcal(Double kcal) {
         this.kcal = kcal;
     }
 }

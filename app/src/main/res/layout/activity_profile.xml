@@ -16,7 +16,182 @@
         android:orientation="vertical">
         <include
             layout="@layout/main_toolbar"/>
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp">
 
+        <TextView
+            android:id="@+id/pp_tvname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="이름  : "
+            android:textSize="30dp" />
+
+        <EditText
+            android:id="@+id/pp_edName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp">
+
+        <TextView
+            android:id="@+id/pp_tvemail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Email  : "
+            android:textSize="30dp" />
+
+        <EditText
+            android:id="@+id/pp_edemail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp">
+
+        <TextView
+            android:id="@+id/pp_tvphone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="전화번호  : "
+            android:textSize="30dp" />
+
+        <EditText
+            android:id="@+id/pp_edphone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_margin="5dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="30dp"
+            android:text="개인 몸 수치 정보 입력창"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/pp_tvheight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="키  : "
+                android:textSize="20dp" />
+
+            <EditText
+                android:id="@+id/pp_edheight"
+                android:layout_width="133dp"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:id="@+id/pp_tvweight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="몸무게  : "
+                android:textSize="20dp" />
+
+            <EditText
+                android:id="@+id/pp_edweight"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="30dp"
+            android:text="성별 선택"/>
+        <RadioGroup
+            android:id="@+id/rg_sex1"
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:layout_height="wrap_content">
+            <RadioButton
+                android:id="@+id/rb_sex1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="남성"
+                android:textSize="20dp"/>
+            <RadioButton
+                android:id="@+id/rb_sex2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="여성"
+                android:textSize="20dp"/>
+
+        </RadioGroup>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="개인 운동량 및 활동량"
+            android:textSize="30dp"/>
+
+        <RadioGroup
+            android:id="@+id/rg_exercise"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <RadioButton
+                android:id="@+id/rb_lowexercise"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="낮은 운동량 및 활동량"
+                android:textSize="20dp"/>
+            <RadioButton
+                android:id="@+id/rb_exercise"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="보통 운동량 및 활동량"
+                android:textSize="20dp"/>
+            <RadioButton
+                android:id="@+id/rb_highexercise"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="높은 운동량 및 활동량"
+                android:textSize="20dp"/>
+        </RadioGroup>
+    </LinearLayout>
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="right"
+    >
+    <Button
+        android:id="@+id/bt_ppsave"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:text="저장"/>
+    <Button
+        android:id="@+id/bt_ppcancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:text="취소"/>
+</LinearLayout>
+</LinearLayout>
     </LinearLayout>
 
     <RelativeLayout
