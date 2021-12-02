@@ -141,23 +141,33 @@ DrawerLayout drawerLayout;
                         else{
 
                             hmName.setText(documentSnapshot.get("fName").toString().trim());
-                            if ((Long)documentSnapshot.get("sex") == 1){
-                                hmSex.setText("남성");
+                            if (documentSnapshot.get("sex") != null){
+                                if ((Long)documentSnapshot.get("sex") == 1){
+                                    hmSex.setText("남성");
+                                }
+                                else if ((Long)documentSnapshot.get("sex") == 0){
+                                    hmSex.setText("여성");
+                                }
                             }
-                            else if ((Long)documentSnapshot.get("sex") == 0){
-                                hmSex.setText("여성");
+                           if (documentSnapshot.get("height") != null){
+                               hmHeight.setText(documentSnapshot.get("height").toString().trim());
+                           }
+                            if (documentSnapshot.get("weight") != null){
+                                hmWeight.setText(documentSnapshot.get("weight").toString().trim());
                             }
-                            hmHeight.setText(documentSnapshot.get("height").toString().trim());
-                            hmWeight.setText(documentSnapshot.get("weight").toString().trim());
-                            if ((Long)documentSnapshot.get("activityRate") == 0){
-                                hmExercise.setText("낮음");
+
+                            if (documentSnapshot.get("activityRate") !=null){
+                                if ((Long)documentSnapshot.get("activityRate") == 0){
+                                    hmExercise.setText("낮음");
+                                }
+                                else if ((Long)documentSnapshot.get("activityRate") == 2){
+                                    hmExercise.setText("보통");
+                                }
+                                else if ((Long)documentSnapshot.get("activityRate") == 1){
+                                    hmExercise.setText("높음");
+                                }
                             }
-                            else if ((Long)documentSnapshot.get("activityRate") == 2){
-                                hmExercise.setText("보통");
-                            }
-                            else if ((Long)documentSnapshot.get("activityRate") == 1){
-                                hmExercise.setText("높음");
-                            }
+
                         }
                     }
                 });
